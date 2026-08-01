@@ -71,7 +71,9 @@ export default function ShopFormPage() {
           name,
           company_name: companyName,
           page_title: pageTitle,
-          phone_number: shop.phone_number || '',
+          phone_number: String(shop.phone_number || '')
+            .replace(/\D/g, '')
+            .slice(0, 10),
           address: shop.address || '',
           currency: CURRENCY_OPTIONS.some((opt) => opt.value === shop.currency)
             ? shop.currency
@@ -103,7 +105,10 @@ export default function ShopFormPage() {
   }, [isEdit, slug])
 
   const onChange = (field) => (e) => {
-    const value = e.target.value
+    let value = e.target.value
+    if (field === 'phone_number') {
+      value = value.replace(/\D/g, '').slice(0, 10)
+    }
     setForm((prev) => {
       if (field === 'name') {
         return {
