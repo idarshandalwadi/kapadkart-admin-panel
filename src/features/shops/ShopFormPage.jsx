@@ -54,7 +54,16 @@ export default function ShopFormPage() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (!isEdit) return undefined
+    if (!isEdit) {
+      setForm(EMPTY_FORM)
+      setManualCompany(false)
+      setManualPageTitle(false)
+      setLoading(false)
+      setSubmitting(false)
+      setError(null)
+      return undefined
+    }
+
     let cancelled = false
 
     const load = async () => {

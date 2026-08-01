@@ -19,8 +19,8 @@ export function AppRoutes() {
         <Route element={<AdminLayout />}>
           <Route path="/" element={<Navigate to="/shops" replace />} />
           <Route path="/shops" element={<ShopListPage />} />
-          <Route path="/shops/new" element={<ShopFormPage />} />
-          <Route path="/shops/:slug/edit" element={<ShopFormPage />} />
+          <Route path="/shops/new" element={<ShopFormPage key="new" />} />
+          <Route path="/shops/:slug/edit" element={<ShopFormPage key="edit" />} />
         </Route>
       </Route>
       <Route path="*" element={<CatchAllRedirect />} />
