@@ -15,6 +15,15 @@ const STATUS_OPTIONS = [
   { value: 'suspended', label: 'Suspended' },
 ]
 
+const PHONE_REGEX = /^\d{10}$/
+
+function validatePhoneNumber(value) {
+  const phone = String(value || '').trim()
+  if (!phone) return 'Phone number is required'
+  if (!PHONE_REGEX.test(phone)) return 'Phone number must be exactly 10 digits'
+  return null
+}
+
 const EMPTY_FORM = {
   slug: '',
   name: '',
@@ -124,10 +133,10 @@ export default function ShopFormPage() {
     setError(null)
 
     const phone = form.phone_number.trim()
-    if (!phone) {
-      const message = 'Phone number is required'
-      setError(message)
-      toast.error(message)
+    const phoneError = validatePhoneNumber(phone)
+    if (phoneError) {
+      setError(phoneError)
+      toast.error(phoneError)
       setSubmitting(false)
       return
     }
@@ -259,10 +268,14 @@ export default function ShopFormPage() {
             <input
               className={fieldClass}
               type="tel"
+              inputMode="numeric"
               value={form.phone_number}
               onChange={onChange('phone_number')}
               required
-              maxLength={20}
+              pattern="\d{10}"
+              maxLength={10}
+              title="Enter a 10-digit phone number"
+              placeholder="9876543210"
             />
           </label>
           <label className={labelClass}>

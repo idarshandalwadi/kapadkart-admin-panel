@@ -1,7 +1,8 @@
 import { clearAdminKey, getAdminKey } from '@/shared/api/adminKey'
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '')
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? basePath
+// Empty string should fall back to the Vite base path (dev proxy prefix)
+const API_BASE = import.meta.env.VITE_API_BASE_URL || basePath
 
 export async function apiFetch(path, options = {}) {
   const headers = {
