@@ -1,0 +1,52 @@
+<svg width="600" height="370" viewBox="0 0 600 370" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Bandhani Dot Pattern for Kurta -->
+    <pattern id="bandhaniPattern" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+      <circle cx="6" cy="6" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="0" cy="0" r="1" fill="#FFFFFF" opacity="0.5"/>
+      <circle cx="12" cy="0" r="1" fill="#FFFFFF" opacity="0.5"/>
+      <circle cx="0" cy="12" r="1" fill="#FFFFFF" opacity="0.5"/>
+      <circle cx="12" cy="12" r="1" fill="#FFFFFF" opacity="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Central Emblem Container -->
+  <g transform="translate(180, 20)">
+    <!-- Hexagon Frame -->
+    <polygon points="120,5 215,60 215,170 120,225 25,170 25,60" fill="none" stroke="#F59E0B" stroke-width="5"/>
+    <polygon points="120,0 225,60 225,175 120,235 15,175 15,60" fill="none" stroke="#0F172A" stroke-width="7"/>
+
+    <!-- Folded Kurta with Mandarin Collar -->
+    <!-- Base Kurta Body -->
+    <path d="M 75 75 L 165 75 L 160 165 L 80 165 Z" fill="#F59E0B" />
+    <!-- Bandhani Pattern Overlay -->
+    <path d="M 75 75 L 165 75 L 160 165 L 80 165 Z" fill="url(#bandhaniPattern)" />
+    
+    <!-- Mandarin Collar / Nehru Neck -->
+    <path d="M 100 75 C 100 60, 140 60, 140 75" fill="none" stroke="#F59E0B" stroke-width="12" stroke-linecap="round"/>
+    <path d="M 104 75 C 104 64, 136 64, 136 75" fill="none" stroke="#0F172A" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- Kurta Placket & Buttons -->
+    <line x1="120" y1="75" x2="120" y2="135" stroke="#0F172A" stroke-width="3"/>
+    <circle cx="120" cy="88" r="2.5" fill="#FFFFFF"/>
+    <circle cx="120" cy="102" r="2.5" fill="#FFFFFF"/>
+    <circle cx="120" cy="116" r="2.5" fill="#FFFFFF"/>
+
+    <!-- Shopping Cart Frame -->
+    <path d="M 40 70 L 55 70 L 72 170 L 175 170 L 190 90 L 60 90" fill="none" stroke="#0F172A" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Cart Wheels -->
+    <circle cx="88" cy="192" r="10" fill="#0F172A"/>
+    <circle cx="88" cy="192" r="4" fill="#FFFFFF"/>
+    <circle cx="160" cy="192" r="10" fill="#0F172A"/>
+    <circle cx="160" cy="192" r="4" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Brand Name Typography -->
+  <text x="300" y="310" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="48" fill="#0F172A" letter-spacing="-0.5">
+    Kapad<tspan fill="#F59E0B">Kart</tspan>
+  </text>
+  
+  <!-- Sub-Tagline -->
+  <text x="300" y="342" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="14" fill="#0F172A" letter-spacing="4">TEXTILE ERP PLATFORM</text>
+</svg>

@@ -1,0 +1,41 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Saffron tile — readable at 16px (navy-only mark read as a black square) -->
+  <rect width="512" height="512" rx="112" fill="#D97706"/>
+
+  <!-- Cart basket -->
+  <path
+    d="M118 168 H168 L198 348 H372 L402 208 H188"
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="28"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- Cart handle -->
+  <path
+    d="M118 168 H152"
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="28"
+    stroke-linecap="round"
+  />
+
+  <!-- Kurta body (textile) -->
+  <path d="M214 196 L318 196 L308 318 L224 318 Z" fill="#0F172A"/>
+  <!-- Collar -->
+  <path
+    d="M242 196 C242 168 290 168 290 196"
+    fill="none"
+    stroke="#0F172A"
+    stroke-width="22"
+    stroke-linecap="round"
+  />
+  <!-- Placket -->
+  <line x1="266" y1="196" x2="266" y2="280" stroke="#FDE68A" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Wheels -->
+  <circle cx="236" cy="388" r="28" fill="#0F172A"/>
+  <circle cx="236" cy="388" r="10" fill="#FDE68A"/>
+  <circle cx="340" cy="388" r="28" fill="#0F172A"/>
+  <circle cx="340" cy="388" r="10" fill="#FDE68A"/>
+</svg>

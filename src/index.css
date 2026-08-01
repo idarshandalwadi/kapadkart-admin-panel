@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Figtree", "Segoe UI", sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+  --color-ink: #1a1c1e;
+  --color-ink-soft: #25282b;
+  --color-canvas: #f4f5f6;
+  --color-light: #fafbfc;
+  --color-surface: #ffffff;
+  --color-border: #d8dbe0;
+  --color-muted: #5c636b;
+  --color-accent: #d97706;
+  --color-accent-hover: #b45309;
+  --color-danger: #b42318;
+  --color-danger-bg: #fef3f2;
+  --color-warn: #92400e;
+  --color-warn-bg: #fef3c7;
+  --color-ok: #146c43;
+  --color-ok-bg: #d9f5e5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background:
+    radial-gradient(ellipse 80% 50% at 100% 0%, rgba(217, 119, 6, 0.12), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 0% 100%, rgba(26, 28, 30, 0.05), transparent 50%),
+    linear-gradient(165deg, #fbfaf8, var(--color-canvas));
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
