@@ -6,7 +6,12 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// Must match nginx location prefix (e.g. /kapadkart_admin/)
+const base = process.env.VITE_BASE_PATH || '/kapadkart_admin/'
+const basePath = base.replace(/\/$/, '') || ''
+
 export default defineConfig({
+  base,
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -17,9 +22,10 @@ export default defineConfig({
     port: 5174,
     strictPort: true,
     proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
+      [`${basePath}/api`]: {
+        target: 'http://localhost:3011',
         changeOrigin: true,
+        rewrite: (path) => path.replace(new RegExp(`^${basePath}`), ''),
       },
     },
   },

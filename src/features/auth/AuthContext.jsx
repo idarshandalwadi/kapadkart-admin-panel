@@ -9,9 +9,15 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (adminKey) => {
     setAdminKey(adminKey.trim())
-    // Verify key by listing tenants
-    await apiFetch('/api/tenants')
-    setAuthenticated(true)
+    try {
+      // Verify key by listing tenants
+      await apiFetch('/api/tenants')
+      setAuthenticated(true)
+    } catch (error) {
+      clearAdminKey()
+      setAuthenticated(false)
+      throw error
+    }
   }, [])
 
   const logout = useCallback(() => {

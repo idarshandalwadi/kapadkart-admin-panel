@@ -1,6 +1,7 @@
 import { clearAdminKey, getAdminKey } from '@/shared/api/adminKey'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '')
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? basePath
 
 export async function apiFetch(path, options = {}) {
   const headers = {
@@ -11,7 +12,8 @@ export async function apiFetch(path, options = {}) {
   const key = getAdminKey()
   if (key) headers['X-Admin-Key'] = key
 
-  const res = await fetch(`${API_BASE}${path}`, {
+  const base = String(API_BASE).replace(/\/$/, '')
+  const res = await fetch(`${base}${path}`, {
     ...options,
     headers,
   })
