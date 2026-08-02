@@ -27,6 +27,16 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(new RegExp(`^${basePath}`), ''),
       },
+      [`${basePath}/uploads`]: {
+        target: 'http://localhost:3011',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(new RegExp(`^${basePath}`), ''),
+      },
+      [`${basePath}/images`]: {
+        target: 'http://localhost:3011',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(new RegExp(`^${basePath}`), ''),
+      },
     },
   },
 })
