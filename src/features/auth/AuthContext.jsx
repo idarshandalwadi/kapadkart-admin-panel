@@ -1,28 +1,37 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { clearAdminKey, getAdminKey, setAdminKey } from '@/shared/api/adminKey'
+import { clearAdminToken, getAdminToken, setAdminToken } from '@/shared/api/adminToken'
 import { apiFetch } from '@/shared/api/http'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [authenticated, setAuthenticated] = useState(() => Boolean(getAdminKey()))
+  const [authenticated, setAuthenticated] = useState(() => Boolean(getAdminToken()))
 
-  const login = useCallback(async (adminKey) => {
-    setAdminKey(adminKey.trim())
-    try {
-      // Verify key by listing tenants
-      await apiFetch('/api/tenants')
-      setAuthenticated(true)
-    } catch (error) {
-      clearAdminKey()
-      setAuthenticated(false)
-      throw error
+  const login = useCallback(async (username, password) => {
+    const json = await apiFetch('/api/platform-auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    })
+    const token = json?.data?.token
+    if (!token) {
+      throw new Error('Login failed')
     }
+    setAdminToken(token)
+    setAuthenticated(true)
+    return json.data
   }, [])
 
-  const logout = useCallback(() => {
-    clearAdminKey()
-    setAuthenticated(false)
+  const logout = useCallback(async () => {
+    try {
+      if (getAdminToken()) {
+        await apiFetch('/api/platform-auth/logout', { method: 'POST' })
+      }
+    } catch {
+      // ignore logout API errors — clear local session either way
+    } finally {
+      clearAdminToken()
+      setAuthenticated(false)
+    }
   }, [])
 
   const value = useMemo(

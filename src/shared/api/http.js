@@ -1,4 +1,4 @@
-import { clearAdminKey, getAdminKey } from '@/shared/api/adminKey'
+import { clearAdminToken, getAdminToken } from '@/shared/api/adminToken'
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '')
 // Empty string should fall back to the Vite base path (dev proxy prefix)
@@ -10,8 +10,8 @@ export async function apiFetch(path, options = {}) {
     ...options.headers,
   }
 
-  const key = getAdminKey()
-  if (key) headers['X-Admin-Key'] = key
+  const token = getAdminToken()
+  if (token) headers.Authorization = `Bearer ${token}`
 
   const base = String(API_BASE).replace(/\/$/, '')
   const res = await fetch(`${base}${path}`, {
@@ -22,7 +22,7 @@ export async function apiFetch(path, options = {}) {
   const json = await res.json().catch(() => ({}))
 
   if (res.status === 401) {
-    clearAdminKey()
+    clearAdminToken()
   }
 
   if (!res.ok || json.success === false) {

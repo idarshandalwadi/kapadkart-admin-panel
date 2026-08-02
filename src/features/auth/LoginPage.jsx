@@ -7,7 +7,8 @@ import logo from '@/assets/kapad-kart-logo.svg'
 export default function LoginPage() {
   const { authenticated, login } = useAuth()
   const navigate = useNavigate()
-  const [adminKey, setAdminKeyValue] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -18,11 +19,11 @@ export default function LoginPage() {
     setSubmitting(true)
     setError(null)
     try {
-      await login(adminKey)
+      await login(username, password)
       toast.success('Signed in successfully')
       navigate('/shops', { replace: true })
     } catch (err) {
-      const message = err.message || 'Invalid admin key'
+      const message = err.message || 'Invalid username or password'
       setError(message)
       toast.error(message)
     } finally {
@@ -42,22 +43,38 @@ export default function LoginPage() {
           Admin Panel
         </h1>
         <p className="mt-2 text-center text-[0.95rem] text-muted">
-          Sign in with your platform admin key to manage shops.
+          Sign in with your platform admin account to manage shops.
         </p>
 
         <form className="mt-8 flex flex-col gap-4" onSubmit={handleSubmit}>
           <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             <span className="inline-flex items-center gap-2">
-              <i className="fa-solid fa-key text-muted" aria-hidden="true" />
-              Platform admin key
+              <i className="fa-solid fa-user text-muted" aria-hidden="true" />
+              Username
+            </span>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              autoComplete="username"
+              placeholder="kapadkart"
+              className="rounded-xl border border-border bg-canvas px-3 py-2.5 font-medium outline-none focus:border-accent"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
+            <span className="inline-flex items-center gap-2">
+              <i className="fa-solid fa-lock text-muted" aria-hidden="true" />
+              Password
             </span>
             <input
               type="password"
-              value={adminKey}
-              onChange={(e) => setAdminKeyValue(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-              placeholder="PLATFORM_ADMIN_KEY"
+              placeholder="••••••••"
               className="rounded-xl border border-border bg-canvas px-3 py-2.5 font-medium outline-none focus:border-accent"
             />
           </label>
@@ -79,7 +96,7 @@ export default function LoginPage() {
             ) : (
               <i className="fa-solid fa-right-to-bracket" aria-hidden="true" />
             )}
-            {submitting ? 'Signing in…' : 'Continue'}
+            {submitting ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
       </div>

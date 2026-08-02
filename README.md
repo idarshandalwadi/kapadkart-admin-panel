@@ -4,8 +4,8 @@ Platform admin UI to add, update, suspend, soft-delete, and restore client shops
 
 ## Run
 
-1. Backend running on `http://localhost:3000` with `PLATFORM_ADMIN_KEY` set in `.env`
-2. Soft-delete migration applied: `npm run db:migrate-soft-delete` (in backend)
+1. Backend running on `http://localhost:3000`
+2. Platform admin table seeded (`db/schema.sql` or `npm run db:upgrade` in backend)
 3. Start this app:
 
 ```bash
@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5174/login` and sign in with `PLATFORM_ADMIN_KEY`.
+Open `http://localhost:5174/login` and sign in with **kapadkart** / **Admin@123**.
 
 ## Features
 
