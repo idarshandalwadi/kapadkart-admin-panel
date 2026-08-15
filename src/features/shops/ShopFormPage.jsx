@@ -410,8 +410,8 @@ export default function ShopFormPage() {
           <p className="m-0 inline-flex items-start gap-2 text-xs text-muted">
             <i className="fa-solid fa-link mt-0.5" aria-hidden="true" />
             <span>
-              After create, the shop login URL will be{' '}
-              <code>/kapadkart/t/{form.slug || '{slug}'}/login</code>
+              After create, shop users can sign in at{' '}
+              <code>/kapadkart/login</code> with their email and password.
             </span>
           </p>
         )}
