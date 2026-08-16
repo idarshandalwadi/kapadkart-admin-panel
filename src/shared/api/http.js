@@ -5,8 +5,9 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, '')
 const API_BASE = import.meta.env.VITE_API_BASE_URL || basePath
 
 export async function apiFetch(path, options = {}) {
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData
   const headers = {
-    ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+    ...(options.body && !isFormData ? { 'Content-Type': 'application/json' } : {}),
     ...options.headers,
   }
 

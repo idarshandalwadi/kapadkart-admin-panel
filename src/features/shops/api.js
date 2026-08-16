@@ -43,3 +43,13 @@ export async function setShopStatus(slug, status) {
     body: JSON.stringify({ status }),
   })
 }
+
+export async function uploadShopLogo(slug, file, filename = 'logo.jpg') {
+  const formData = new FormData()
+  formData.append('file', file, filename)
+  const json = await apiFetch(`/api/tenants/${encodeURIComponent(slug)}/uploads/branding`, {
+    method: 'POST',
+    body: formData,
+  })
+  return json.data
+}

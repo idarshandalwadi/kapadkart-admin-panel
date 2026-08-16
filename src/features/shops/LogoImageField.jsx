@@ -2,8 +2,11 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import Cropper from 'react-easy-crop'
 import { toast } from 'sonner'
 import 'react-easy-crop/react-easy-crop.css'
+import { uploadShopLogo } from '@/features/shops/api'
+import { resolveAdminAssetUrl } from '@/shared/utils/assetUrl'
 import {
-  getCroppedImageDataUrl,
+  extensionForMime,
+  getCompressedCroppedImageBlob,
   isImageFile,
   readFileAsDataUrl,
 } from '@/shared/utils/cropImage'
@@ -13,9 +16,15 @@ const ACCEPTED = 'image/jpeg,image/png,image/webp,image/gif'
 const btnClass =
   'inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-[0.45rem] text-[0.8rem] font-semibold text-ink hover:bg-canvas disabled:cursor-not-allowed disabled:bg-canvas disabled:text-muted'
 
-export default function LogoImageField({ value = '', onChange }) {
+export default function LogoImageField({
+  value = '',
+  slug = '',
+  onChange,
+  onPendingFile,
+}) {
   const inputId = useId()
   const inputRef = useRef(null)
+  const previewObjectUrlRef = useRef('')
 
   const [dragging, setDragging] = useState(false)
   const [error, setError] = useState(null)
@@ -25,6 +34,17 @@ export default function LogoImageField({ value = '', onChange }) {
   const [rotation, setRotation] = useState(0)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
   const [saving, setSaving] = useState(false)
+
+  const previewSrc = resolveAdminAssetUrl(value) || value
+
+  const revokePreviewUrl = () => {
+    if (previewObjectUrlRef.current) {
+      URL.revokeObjectURL(previewObjectUrlRef.current)
+      previewObjectUrlRef.current = ''
+    }
+  }
+
+  useEffect(() => () => revokePreviewUrl(), [])
 
   useEffect(() => {
     if (!editorSrc) return undefined
@@ -83,16 +103,33 @@ export default function LogoImageField({ value = '', onChange }) {
     setSaving(true)
     setError(null)
     try {
-      const dataUrl = await getCroppedImageDataUrl(editorSrc, croppedAreaPixels, rotation, {
-        mimeType: 'image/png',
-        quality: 0.92,
+      const mimeType = 'image/jpeg'
+      const blob = await getCompressedCroppedImageBlob(editorSrc, croppedAreaPixels, rotation, {
+        mimeType,
         maxEdge: 800,
+        maxBytes: 500 * 1024,
+        initialQuality: 0.85,
       })
-      onChange(dataUrl)
+      const filename = `logo.${extensionForMime(mimeType)}`
+      const file = new File([blob], filename, { type: mimeType })
+
+      if (slug) {
+        const uploaded = await uploadShopLogo(slug, file, filename)
+        revokePreviewUrl()
+        onPendingFile?.(null)
+        onChange(uploaded.url)
+        toast.success('Logo uploaded — save the shop to apply')
+      } else {
+        revokePreviewUrl()
+        const previewUrl = URL.createObjectURL(blob)
+        previewObjectUrlRef.current = previewUrl
+        onPendingFile?.(file)
+        onChange(previewUrl)
+        toast.success('Logo ready — save the shop to apply')
+      }
       setEditorSrc(null)
-      toast.success('Logo ready — save the shop to apply')
-    } catch {
-      const message = 'Could not process the image. Try another file.'
+    } catch (err) {
+      const message = err?.message || 'Could not process the image. Try another file.'
       setError(message)
       toast.error(message)
     } finally {
@@ -101,6 +138,8 @@ export default function LogoImageField({ value = '', onChange }) {
   }
 
   const clearLogo = () => {
+    revokePreviewUrl()
+    onPendingFile?.(null)
     onChange('')
     setError(null)
     if (inputRef.current) inputRef.current.value = ''
@@ -114,10 +153,10 @@ export default function LogoImageField({ value = '', onChange }) {
         Logo
       </span>
 
-      {value ? (
+      {previewSrc ? (
         <div className="flex flex-wrap items-center gap-4">
           <div className="overflow-hidden rounded-xl border border-border bg-canvas p-2">
-            <img src={value} alt="Shop logo preview" className="block h-20 w-20 object-contain" />
+            <img src={previewSrc} alt="Shop logo preview" className="block h-20 w-20 object-contain" />
           </div>
           <div className="flex flex-wrap gap-2">
             <button type="button" className={btnClass} onClick={() => inputRef.current?.click()}>
@@ -189,6 +228,9 @@ export default function LogoImageField({ value = '', onChange }) {
       />
 
       {error && <p className="m-0 text-xs font-semibold text-danger">{error}</p>}
+      <p className="m-0 text-xs text-muted">
+        JPEG or PNG recommended. Images are compressed before upload.
+      </p>
 
       {editorSrc && (
         <div
@@ -290,7 +332,7 @@ export default function LogoImageField({ value = '', onChange }) {
                     ) : (
                       <i className="fa-solid fa-check" aria-hidden="true" />
                     )}
-                    {saving ? 'Saving…' : 'Use logo'}
+                    {saving ? 'Uploading…' : 'Use logo'}
                   </button>
                 </div>
               </div>

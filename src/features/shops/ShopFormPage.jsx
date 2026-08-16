@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { createShop, getShop, updateShop } from '@/features/shops/api'
+import { createShop, getShop, updateShop, uploadShopLogo } from '@/features/shops/api'
 import LogoImageField from '@/features/shops/LogoImageField'
 import FormSelect from '@/shared/components/FormSelect'
+import { isInlineAssetUrl } from '@/shared/utils/assetUrl'
 
 const CURRENCY_OPTIONS = [
   { value: 'INR', label: 'INR (₹)' },
@@ -47,6 +48,7 @@ export default function ShopFormPage() {
   const navigate = useNavigate()
 
   const [form, setForm] = useState(EMPTY_FORM)
+  const [pendingLogoFile, setPendingLogoFile] = useState(null)
   const [manualCompany, setManualCompany] = useState(false)
   const [manualPageTitle, setManualPageTitle] = useState(false)
   const [loading, setLoading] = useState(isEdit)
@@ -56,6 +58,7 @@ export default function ShopFormPage() {
   useEffect(() => {
     if (!isEdit) {
       setForm(EMPTY_FORM)
+      setPendingLogoFile(null)
       setManualCompany(false)
       setManualPageTitle(false)
       setLoading(false)
@@ -95,6 +98,7 @@ export default function ShopFormPage() {
           owner_password: '',
           status: shop.status === 'deleted' ? 'active' : shop.status || 'active',
         })
+        setPendingLogoFile(null)
         setManualCompany(Boolean(companyName && companyName !== name))
         setManualPageTitle(Boolean(pageTitle && pageTitle !== name))
       } catch (err) {
@@ -155,6 +159,8 @@ export default function ShopFormPage() {
       return
     }
 
+    const storedLogoUrl = isInlineAssetUrl(form.logo_url) ? '' : form.logo_url.trim()
+
     try {
       if (isEdit) {
         const payload = {
@@ -167,7 +173,7 @@ export default function ShopFormPage() {
           currency: form.currency.trim() || 'INR',
           primary_color: form.primary_color.trim(),
           secondary_color: form.secondary_color.trim(),
-          logo_url: form.logo_url.trim(),
+          logo_url: storedLogoUrl,
           owner_email: form.owner_email.trim(),
           owner_full_name: form.owner_full_name.trim(),
         }
@@ -186,11 +192,28 @@ export default function ShopFormPage() {
           currency: form.currency.trim() || 'INR',
           primary_color: form.primary_color.trim(),
           secondary_color: form.secondary_color.trim(),
-          logo_url: form.logo_url.trim(),
+          logo_url: storedLogoUrl,
           owner_email: form.owner_email.trim(),
           owner_full_name: form.owner_full_name.trim(),
           owner_password: form.owner_password,
         })
+        if (pendingLogoFile) {
+          try {
+            const uploaded = await uploadShopLogo(
+              nextSlug,
+              pendingLogoFile,
+              pendingLogoFile.name || 'logo.jpg',
+            )
+            await updateShop(nextSlug, { logo_url: uploaded.url })
+          } catch (logoErr) {
+            toast.success(`Created shop "${nextSlug}"`)
+            toast.error(
+              logoErr.message || 'Shop created, but logo upload failed. Edit the shop to retry.',
+            )
+            navigate(`/shops/${nextSlug}/edit`)
+            return
+          }
+        }
         toast.success(`Created shop "${nextSlug}"`)
       }
       navigate('/shops')
@@ -330,7 +353,9 @@ export default function ShopFormPage() {
           </label>
           <LogoImageField
             value={form.logo_url}
+            slug={isEdit ? slug : ''}
             onChange={(logo_url) => setForm((prev) => ({ ...prev, logo_url }))}
+            onPendingFile={setPendingLogoFile}
           />
           {isEdit && (
             <label className={labelClass}>

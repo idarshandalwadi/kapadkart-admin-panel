@@ -5,7 +5,7 @@ Platform admin UI to add, update, suspend, soft-delete, and restore client shops
 ## Run
 
 1. Backend running on `http://localhost:3000`
-2. Platform admin table seeded (`db/schema.sql` or `npm run db:upgrade` in backend)
+2. Platform admin seeded (`npm run db:setup` in the backend — `db/init.sql`)
 3. Start this app:
 
 ```bash

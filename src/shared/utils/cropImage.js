@@ -1,7 +1,8 @@
 /**
  * Crop + rotate helper aligned with react-easy-crop's recommended canvas approach.
+ * Prefer Blob/File for upload to disk storage; data URLs remain for editor preview only.
  */
-export async function getCroppedImageDataUrl(
+export async function getCroppedImageBlob(
   imageSrc,
   croppedAreaPixels,
   rotation = 0,
@@ -47,9 +48,95 @@ export async function getCroppedImageDataUrl(
   const croppedCtx = croppedCanvas.getContext('2d')
   if (!croppedCtx) throw new Error('Could not create crop canvas')
 
+  if (mimeType === 'image/jpeg' || mimeType === 'image/webp') {
+    croppedCtx.fillStyle = '#ffffff'
+    croppedCtx.fillRect(0, 0, outW, outH)
+  }
+
   croppedCtx.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, outW, outH)
 
-  return croppedCanvas.toDataURL(mimeType, quality)
+  return new Promise((resolve, reject) => {
+    croppedCanvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error('Could not encode image'))
+          return
+        }
+        resolve(blob)
+      },
+      mimeType,
+      quality,
+    )
+  })
+}
+
+/**
+ * Crop then compress until the blob is under `maxBytes`.
+ * Prefer JPEG/WebP — PNG is lossless and ignores quality, so it often stays too large.
+ */
+export async function getCompressedCroppedImageBlob(
+  imageSrc,
+  croppedAreaPixels,
+  rotation = 0,
+  {
+    mimeType = 'image/jpeg',
+    maxEdge = 800,
+    maxBytes = 500 * 1024,
+    initialQuality = 0.85,
+    minQuality = 0.55,
+    minEdge = 400,
+  } = {},
+) {
+  let quality = initialQuality
+  let edge = maxEdge
+  let outputMime = mimeType
+  let blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels, rotation, {
+    mimeType: outputMime,
+    quality,
+    maxEdge: edge,
+  })
+
+  if (blob.size > maxBytes && outputMime === 'image/png') {
+    outputMime = 'image/jpeg'
+    blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels, rotation, {
+      mimeType: outputMime,
+      quality,
+      maxEdge: edge,
+    })
+  }
+
+  while (blob.size > maxBytes && (quality > minQuality + 0.01 || edge > minEdge)) {
+    if (quality > minQuality + 0.01) {
+      quality = Math.max(minQuality, Number((quality - 0.1).toFixed(2)))
+    } else {
+      edge = Math.max(minEdge, Math.round(edge * 0.75))
+      quality = initialQuality
+    }
+
+    blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels, rotation, {
+      mimeType: outputMime,
+      quality,
+      maxEdge: edge,
+    })
+  }
+
+  if (blob.size > maxBytes) {
+    throw new Error(
+      `Image is still too large after compression (${Math.ceil(blob.size / 1024)} KB). Try a simpler logo.`,
+    )
+  }
+
+  return blob
+}
+
+export async function getCroppedImageDataUrl(
+  imageSrc,
+  croppedAreaPixels,
+  rotation = 0,
+  options = {},
+) {
+  const blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels, rotation, options)
+  return readBlobAsDataUrl(blob)
 }
 
 function loadImage(src) {
@@ -70,6 +157,22 @@ export function readFileAsDataUrl(file) {
   })
 }
 
+function readBlobAsDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.addEventListener('load', () => resolve(reader.result))
+    reader.addEventListener('error', () => reject(new Error('Failed to read blob')))
+    reader.readAsDataURL(blob)
+  })
+}
+
 export function isImageFile(file) {
   return Boolean(file && file.type && file.type.startsWith('image/'))
+}
+
+export function extensionForMime(mimeType) {
+  if (mimeType === 'image/png') return 'png'
+  if (mimeType === 'image/webp') return 'webp'
+  if (mimeType === 'image/gif') return 'gif'
+  return 'jpg'
 }
