@@ -127,7 +127,7 @@ export default function ShopFormPage() {
         return {
           ...prev,
           name: value,
-          company_name: manualCompany ? prev.company_name : value,
+          company_name: manualCompany ? prev.company_name : value.slice(0, 100),
           page_title: manualPageTitle ? prev.page_title : value,
         }
       }
@@ -294,7 +294,12 @@ export default function ShopFormPage() {
           </label>
           <label className={labelClass}>
             Company name
-            <input className={fieldClass} value={form.company_name} onChange={onCompanyChange} />
+            <input
+              className={fieldClass}
+              value={form.company_name}
+              onChange={onCompanyChange}
+              maxLength={100}
+            />
           </label>
           <label className={labelClass}>
             Page title
@@ -331,6 +336,7 @@ export default function ShopFormPage() {
               rows={2}
               value={form.address}
               onChange={onChange('address')}
+              maxLength={200}
             />
           </label>
           <label className={labelClass}>
