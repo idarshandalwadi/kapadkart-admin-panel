@@ -23,17 +23,17 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       [`${basePath}/api`]: {
-        target: 'http://localhost:3011',
+        target: 'http://localhost:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(new RegExp(`^${basePath}`), ''),
       },
       [`${basePath}/uploads`]: {
-        target: 'http://localhost:3011',
+        target: 'http://localhost:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(new RegExp(`^${basePath}`), ''),
       },
       [`${basePath}/images`]: {
-        target: 'http://localhost:3011',
+        target: 'http://localhost:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(new RegExp(`^${basePath}`), ''),
       },

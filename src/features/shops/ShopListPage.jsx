@@ -31,7 +31,7 @@ function StatusBadge({ status }) {
 }
 
 const actionBtn =
-  'inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold disabled:opacity-50'
+  'inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 min-h-[44px] min-w-[44px] text-xs font-semibold disabled:opacity-50'
 
 export default function ShopListPage() {
   const [shops, setShops] = useState([])

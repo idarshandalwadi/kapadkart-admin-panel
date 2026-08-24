@@ -14,7 +14,7 @@ function desktopNavClass({ isActive }) {
 
 function mobileNavClass({ isActive }) {
   return [
-    'flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[0.72rem] font-semibold no-underline transition-colors',
+    'flex flex-1 flex-col items-center justify-center min-h-[44px] gap-1 py-2.5 text-[0.72rem] font-semibold no-underline transition-colors',
     isActive ? 'text-accent' : 'text-muted',
   ].join(' ')
 }
@@ -65,10 +65,10 @@ export default function AdminLayout() {
           <button
             type="button"
             onClick={handleLogout}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-accent px-3 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-accent px-3 py-2 min-h-[44px] text-sm font-semibold text-white hover:bg-accent-hover"
           >
             <i className="fa-solid fa-right-from-bracket" aria-hidden="true" />
-            Logout
+            <span className="hidden sm:inline">Logout</span>
           </button>
         </div>
       </header>
