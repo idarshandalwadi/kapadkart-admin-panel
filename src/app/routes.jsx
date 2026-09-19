@@ -4,6 +4,7 @@ import ProtectedRoute from '@/features/auth/ProtectedRoute'
 import { useAuth } from '@/features/auth/AuthContext'
 import ShopFormPage from '@/features/shops/ShopFormPage'
 import ShopListPage from '@/features/shops/ShopListPage'
+import EmailLogsPage from '@/features/emails/EmailLogsPage'
 import AdminLayout from '@/shared/components/AdminLayout'
 
 function CatchAllRedirect() {
@@ -21,6 +22,7 @@ export function AppRoutes() {
           <Route path="/shops" element={<ShopListPage />} />
           <Route path="/shops/new" element={<ShopFormPage key="new" />} />
           <Route path="/shops/:slug/edit" element={<ShopFormPage key="edit" />} />
+          <Route path="/emails" element={<EmailLogsPage />} />
         </Route>
       </Route>
       <Route path="*" element={<CatchAllRedirect />} />
