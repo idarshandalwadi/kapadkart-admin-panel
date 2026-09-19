@@ -59,6 +59,10 @@ export default function AdminLayout() {
                 <i className="fa-solid fa-circle-plus" aria-hidden="true" />
                 Add shop
               </NavLink>
+              <NavLink to="/emails" className={desktopNavClass}>
+                <i className="fa-solid fa-envelope" aria-hidden="true" />
+                Email Logs
+              </NavLink>
             </nav>
           </div>
 
@@ -89,6 +93,10 @@ export default function AdminLayout() {
           <NavLink to="/shops/new" className={mobileNavClass}>
             <i className="fa-solid fa-circle-plus text-[1.15rem]" aria-hidden="true" />
             Add shop
+          </NavLink>
+          <NavLink to="/emails" className={mobileNavClass}>
+            <i className="fa-solid fa-envelope text-[1.15rem]" aria-hidden="true" />
+            Emails
           </NavLink>
         </div>
       </nav>
