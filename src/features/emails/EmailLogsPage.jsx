@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import {
   getEmailLogs,
@@ -187,13 +188,17 @@ function LogDetailModal({ log, onClose }) {
 }
 
 export default function EmailLogsPage() {
+  const [searchParams] = useSearchParams()
+  const initialStatus = searchParams.get('status') || 'all'
+  const initialTenantId = searchParams.get('tenantId') || ''
+
   const [logs, setLogs] = useState([])
   const [totalLogs, setTotalLogs] = useState(0)
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
-  const [statusFilter, setStatusFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState(initialStatus)
   const [search, setSearch] = useState('')
-  const [tenantFilter, setTenantFilter] = useState('')
+  const [tenantFilter, setTenantFilter] = useState(initialTenantId)
   const [templateFilter, setTemplateFilter] = useState('')
   const [shops, setShops] = useState([])
   const [stats, setStats] = useState(null)
@@ -201,6 +206,13 @@ export default function EmailLogsPage() {
   const [loading, setLoading] = useState(true)
   const [testingConnection, setTestingConnection] = useState(false)
   const [selectedLog, setSelectedLog] = useState(null)
+
+  useEffect(() => {
+    const urlStatus = searchParams.get('status') || 'all'
+    const urlTenantId = searchParams.get('tenantId') || ''
+    setStatusFilter(urlStatus)
+    setTenantFilter(urlTenantId)
+  }, [searchParams])
 
   const loadData = async () => {
     setLoading(true)
