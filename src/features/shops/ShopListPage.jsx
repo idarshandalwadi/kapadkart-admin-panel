@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import {
   listShops,
@@ -34,8 +34,11 @@ const actionBtn =
   'inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 min-h-[44px] min-w-[44px] text-xs font-semibold disabled:opacity-50'
 
 export default function ShopListPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const statusFilter = searchParams.get('status') || 'all'
+  const includeDeleted = searchParams.get('include_deleted') === 'true' || statusFilter === 'deleted'
+
   const [shops, setShops] = useState([])
-  const [includeDeleted, setIncludeDeleted] = useState(false)
   const [loading, setLoading] = useState(true)
   const [busySlug, setBusySlug] = useState(null)
   const [pendingAction, setPendingAction] = useState(null)
@@ -44,7 +47,7 @@ export default function ShopListPage() {
     setLoading(true)
     try {
       const data = await listShops({ includeDeleted: showDeleted })
-      setShops(data)
+      setShops(Array.isArray(data) ? data : [])
     } catch (err) {
       toast.error(err.message || 'Failed to load shops')
     } finally {
@@ -89,7 +92,38 @@ export default function ShopListPage() {
     }
   }
 
+  const handleStatusChange = (tab) => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (tab === 'all') {
+      nextParams.delete('status')
+    } else {
+      nextParams.set('status', tab)
+    }
+    if (tab === 'deleted') {
+      nextParams.set('include_deleted', 'true')
+    }
+    setSearchParams(nextParams)
+  }
+
+  const handleToggleIncludeDeleted = (checked) => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (checked) {
+      nextParams.set('include_deleted', 'true')
+    } else {
+      nextParams.delete('include_deleted')
+      if (statusFilter === 'deleted') {
+        nextParams.delete('status')
+      }
+    }
+    setSearchParams(nextParams)
+  }
+
   const confirming = Boolean(pendingAction && busySlug === pendingAction.shop.slug)
+
+  const filteredShops = (shops || []).filter((shop) => {
+    if (statusFilter === 'all') return true
+    return shop.status === statusFilter
+  })
 
   return (
     <div className="flex flex-col gap-6">
@@ -103,14 +137,43 @@ export default function ShopListPage() {
             Add, update, suspend, or soft-delete client shops.
           </p>
         </div>
-        <label className="inline-flex items-center gap-2 text-sm text-ink-soft">
+
+        <Link
+          to="/shops/new"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover transition-colors no-underline"
+        >
+          <i className="fa-solid fa-circle-plus" />
+          <span>Add New Shop</span>
+        </Link>
+      </div>
+
+      {/* Filter Tabs & Toggle */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-1">
+          {['all', 'active', 'suspended', 'deleted'].map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => handleStatusChange(tab)}
+              className={`cursor-pointer rounded-xl px-3.5 py-1.5 text-xs font-semibold capitalize transition-colors min-h-[36px] ${
+                statusFilter === tab
+                  ? 'bg-accent text-white shadow-sm'
+                  : 'bg-surface text-ink-soft border border-border/80 hover:bg-canvas'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <label className="inline-flex items-center gap-2 text-sm text-ink-soft cursor-pointer">
           <input
             type="checkbox"
             checked={includeDeleted}
-            onChange={(e) => setIncludeDeleted(e.target.checked)}
+            onChange={(e) => handleToggleIncludeDeleted(e.target.checked)}
           />
           <i className="fa-solid fa-eye-slash text-muted" aria-hidden="true" />
-          Show deleted
+          Include deleted in list
         </label>
       </div>
 
@@ -120,17 +183,21 @@ export default function ShopListPage() {
             <i className="fa-solid fa-spinner fa-spin" aria-hidden="true" />
             Loading shops…
           </p>
-        ) : shops.length === 0 ? (
+        ) : filteredShops.length === 0 ? (
           <div className="p-8 text-center">
             <i className="fa-solid fa-store text-3xl text-muted/50" aria-hidden="true" />
-            <p className="mt-3 mb-0 text-muted">No shops yet.</p>
-            <Link
-              to="/shops/new"
-              className="mt-3 inline-flex items-center gap-2 font-semibold text-accent no-underline"
-            >
-              <i className="fa-solid fa-circle-plus" aria-hidden="true" />
-              Create your first shop
-            </Link>
+            <p className="mt-3 mb-0 text-muted">
+              {statusFilter !== 'all' ? `No ${statusFilter} shops found.` : 'No shops yet.'}
+            </p>
+            {statusFilter === 'all' && (
+              <Link
+                to="/shops/new"
+                className="mt-3 inline-flex items-center gap-2 font-semibold text-accent no-underline"
+              >
+                <i className="fa-solid fa-circle-plus" aria-hidden="true" />
+                Create your first shop
+              </Link>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -145,7 +212,7 @@ export default function ShopListPage() {
                 </tr>
               </thead>
               <tbody>
-                {shops.map((shop) => {
+                {filteredShops.map((shop) => {
                   const busy = busySlug === shop.slug
                   return (
                     <tr key={shop.id} className="border-t border-border">

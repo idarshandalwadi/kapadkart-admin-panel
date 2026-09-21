@@ -34,7 +34,7 @@ export default function AdminLayout() {
       <header className="sticky top-0 z-20 border-b border-border/80 bg-surface/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
           <div className="flex min-w-0 items-center gap-8">
-            <Link to="/shops" className="flex shrink-0 items-center gap-3 no-underline">
+            <Link to="/dashboard" className="flex shrink-0 items-center gap-3 no-underline">
               <img
                 src={brandMark}
                 alt="KapadKart"
@@ -51,6 +51,10 @@ export default function AdminLayout() {
             </Link>
 
             <nav className="hidden items-center gap-6 md:flex" aria-label="Main">
+              <NavLink to="/dashboard" end className={desktopNavClass}>
+                <i className="fa-solid fa-chart-pie" aria-hidden="true" />
+                Dashboard
+              </NavLink>
               <NavLink to="/shops" end className={desktopNavClass}>
                 <i className="fa-solid fa-store" aria-hidden="true" />
                 Shops
@@ -86,6 +90,10 @@ export default function AdminLayout() {
         aria-label="Mobile"
       >
         <div className="mx-auto flex max-w-6xl">
+          <NavLink to="/dashboard" end className={mobileNavClass}>
+            <i className="fa-solid fa-chart-pie text-[1.15rem]" aria-hidden="true" />
+            Dashboard
+          </NavLink>
           <NavLink to="/shops" end className={mobileNavClass}>
             <i className="fa-solid fa-store text-[1.15rem]" aria-hidden="true" />
             Shops

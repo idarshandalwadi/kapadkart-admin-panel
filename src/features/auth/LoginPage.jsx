@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
-  if (authenticated) return <Navigate to="/shops" replace />
+  if (authenticated) return <Navigate to="/dashboard" replace />
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -21,7 +21,7 @@ export default function LoginPage() {
     try {
       await login(username, password)
       toast.success('Signed in successfully')
-      navigate('/shops', { replace: true })
+      navigate('/dashboard', { replace: true })
     } catch (err) {
       const message = err.message || 'Invalid username or password'
       setError(message)
