@@ -5,6 +5,7 @@ import { useAuth } from '@/features/auth/AuthContext'
 import PlatformDashboardPage from '@/features/dashboard/PlatformDashboardPage'
 import ShopFormPage from '@/features/shops/ShopFormPage'
 import ShopListPage from '@/features/shops/ShopListPage'
+import ShopDetailPage from '@/features/shops/ShopDetailPage'
 import EmailLogsPage from '@/features/emails/EmailLogsPage'
 import AdminLayout from '@/shared/components/AdminLayout'
 
@@ -24,6 +25,7 @@ export function AppRoutes() {
           <Route path="/shops" element={<ShopListPage />} />
           <Route path="/shops/new" element={<ShopFormPage key="new" />} />
           <Route path="/shops/:slug/edit" element={<ShopFormPage key="edit" />} />
+          <Route path="/shops/:slug" element={<ShopDetailPage />} />
           <Route path="/emails" element={<EmailLogsPage />} />
         </Route>
       </Route>
