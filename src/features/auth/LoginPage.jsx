@@ -7,8 +7,9 @@ import logo from '@/assets/kapad-kart-logo.svg'
 export default function LoginPage() {
   const { authenticated, login } = useAuth()
   const navigate = useNavigate()
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -19,11 +20,11 @@ export default function LoginPage() {
     setSubmitting(true)
     setError(null)
     try {
-      await login(username, password)
+      await login(email, password)
       toast.success('Signed in successfully')
       navigate('/dashboard', { replace: true })
     } catch (err) {
-      const message = err.message || 'Invalid username or password'
+      const message = err.message || 'Invalid email or password'
       setError(message)
       toast.error(message)
     } finally {
@@ -49,17 +50,17 @@ export default function LoginPage() {
         <form className="mt-8 flex flex-col gap-4" onSubmit={handleSubmit}>
           <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             <span className="inline-flex items-center gap-2">
-              <i className="fa-solid fa-user text-muted" aria-hidden="true" />
-              Username
+              <i className="fa-solid fa-envelope text-muted" aria-hidden="true" />
+              Email Address
             </span>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="username"
-              placeholder="kapadkart"
-              className="rounded-xl border border-border bg-canvas px-3 py-2.5 font-medium outline-none focus:border-accent"
+              autoComplete="email"
+              placeholder="admin@kapadkart.com"
+              className="rounded-xl border border-border bg-canvas px-3 py-2.5 font-medium outline-none transition-colors focus:border-accent"
             />
           </label>
 
@@ -68,15 +69,28 @@ export default function LoginPage() {
               <i className="fa-solid fa-lock text-muted" aria-hidden="true" />
               Password
             </span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              placeholder="••••••••"
-              className="rounded-xl border border-border bg-canvas px-3 py-2.5 font-medium outline-none focus:border-accent"
-            />
+            <div className="relative flex items-center">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+                placeholder="••••••••"
+                className="w-full rounded-xl border border-border bg-canvas py-2.5 pr-11 pl-3 font-medium outline-none transition-colors focus:border-accent"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer p-1 text-muted transition-colors hover:text-ink focus:text-accent focus:outline-none"
+              >
+                <i
+                  className={showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'}
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
           </label>
 
           {error && (
@@ -103,3 +117,4 @@ export default function LoginPage() {
     </div>
   )
 }
+

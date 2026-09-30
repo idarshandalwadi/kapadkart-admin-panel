@@ -7,10 +7,10 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [authenticated, setAuthenticated] = useState(() => Boolean(getAdminToken()))
 
-  const login = useCallback(async (username, password) => {
+  const login = useCallback(async (email, password) => {
     const json = await apiFetch('/api/platform-auth/login', {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email: String(email).trim(), password }),
     })
     const token = json?.data?.token
     if (!token) {

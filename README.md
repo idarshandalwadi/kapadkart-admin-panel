@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5174/login` and sign in with **kapadkart** / **Admin@123**.
+Open `http://localhost:5174/login` and sign in with **admin@kapadkart.com** / **Admin@123**.
 
 ## Features
 

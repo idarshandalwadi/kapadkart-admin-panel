@@ -53,3 +53,38 @@ export async function uploadShopLogo(slug, file, filename = 'logo.jpg') {
   })
   return json.data
 }
+
+export async function getShopDetail(slug) {
+  const json = await apiFetch(`/api/tenants/${encodeURIComponent(slug)}/detail`)
+  return json.data
+}
+
+export async function getShopUsers(slug) {
+  const json = await apiFetch(`/api/tenants/${encodeURIComponent(slug)}/users`)
+  return json.data
+}
+
+export async function getShopActivity(slug, params = {}) {
+  const query = new URLSearchParams()
+  if (params.page) query.set('page', params.page)
+  if (params.limit) query.set('limit', params.limit)
+  if (params.search) query.set('search', params.search)
+  if (params.action && params.action !== 'all') query.set('action', params.action)
+
+  const qs = query.toString() ? `?${query.toString()}` : ''
+  const json = await apiFetch(`/api/tenants/${encodeURIComponent(slug)}/activity${qs}`)
+  return json.data
+}
+
+export async function getShopNotes(slug) {
+  const json = await apiFetch(`/api/tenants/${encodeURIComponent(slug)}/notes`)
+  return json.data
+}
+
+export async function addShopNote(slug, content) {
+  const json = await apiFetch(`/api/tenants/${encodeURIComponent(slug)}/notes`, {
+    method: 'POST',
+    body: JSON.stringify({ content }),
+  })
+  return json.data
+}

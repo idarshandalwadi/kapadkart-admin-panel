@@ -217,8 +217,16 @@ export default function ShopListPage() {
                   return (
                     <tr key={shop.id} className="border-t border-border">
                       <td className="px-4 py-3">
-                        <div className="font-semibold text-ink">{shop.company_name || shop.name}</div>
-                        <div className="text-xs text-muted">{shop.slug}</div>
+                        <Link
+                          to={`/shops/${shop.slug}`}
+                          className="group block no-underline"
+                        >
+                          <div className="font-semibold text-ink group-hover:text-accent transition-colors flex items-center gap-1.5">
+                            <span>{shop.company_name || shop.name}</span>
+                            <i className="fa-solid fa-arrow-up-right-from-square text-[0.65rem] opacity-0 group-hover:opacity-100 transition-opacity text-accent" />
+                          </div>
+                          <div className="text-xs text-muted group-hover:text-accent/80 transition-colors">{shop.slug}</div>
+                        </Link>
                       </td>
                       <td className="px-4 py-3">
                         <div>{shop.owner?.full_name || '—'}</div>
