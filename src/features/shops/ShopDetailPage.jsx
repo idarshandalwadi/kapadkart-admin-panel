@@ -55,6 +55,7 @@ export default function ShopDetailPage() {
         setNotesCount(data.notes_count)
       }
     } catch (err) {
+      if (err?.silent) return
       setError(err.message || 'Failed to load shop details')
       toast.error(err.message || 'Failed to load shop details')
     } finally {

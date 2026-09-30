@@ -129,6 +129,7 @@ export default function LogoImageField({
       }
       setEditorSrc(null)
     } catch (err) {
+      if (err?.silent) return
       const message = err?.message || 'Could not process the image. Try another file.'
       setError(message)
       toast.error(message)

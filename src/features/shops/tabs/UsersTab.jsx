@@ -26,6 +26,7 @@ export default function UsersTab({ slug }) {
       const data = await getShopUsers(slug)
       setUsers(Array.isArray(data) ? data : [])
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Failed to load shop users')
     } finally {
       setLoading(false)

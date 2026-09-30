@@ -31,6 +31,7 @@ export default function NotesTab({ slug, onNotesCountChange }) {
         onNotesCountChange(list.length)
       }
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Failed to load internal notes')
     } finally {
       setLoading(false)
@@ -57,6 +58,7 @@ export default function NotesTab({ slug, onNotesCountChange }) {
       setNewContent('')
       await load()
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Failed to add note')
     } finally {
       setSubmitting(false)

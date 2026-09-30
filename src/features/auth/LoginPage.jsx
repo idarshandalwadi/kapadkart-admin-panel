@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/features/auth/AuthContext'
+import { getAdminToken } from '@/shared/api/adminToken'
 import logo from '@/assets/kapad-kart-logo.svg'
 
 export default function LoginPage() {
@@ -13,7 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
-  if (authenticated) return <Navigate to="/dashboard" replace />
+  if (authenticated && getAdminToken()) return <Navigate to="/dashboard" replace />
 
   const handleSubmit = async (e) => {
     e.preventDefault()

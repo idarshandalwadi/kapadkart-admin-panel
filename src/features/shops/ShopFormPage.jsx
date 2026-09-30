@@ -102,7 +102,7 @@ export default function ShopFormPage() {
         setManualCompany(Boolean(companyName && companyName !== name))
         setManualPageTitle(Boolean(pageTitle && pageTitle !== name))
       } catch (err) {
-        if (!cancelled) {
+        if (!cancelled && !err?.silent) {
           setError(err.message)
           toast.error(err.message || 'Failed to load shop')
         }
@@ -218,6 +218,7 @@ export default function ShopFormPage() {
       }
       navigate('/shops')
     } catch (err) {
+      if (err?.silent) return
       setError(err.message)
       toast.error(err.message || 'Failed to save shop')
     } finally {

@@ -47,6 +47,7 @@ export default function PlatformDashboardPage() {
         setSummary(data)
       }
     } catch (err) {
+      if (err?.silent) return
       if (activeRangeRef.current === selectedRange) {
         const msg = err.message || 'Failed to load platform summary'
         setSummaryError(msg)
@@ -65,6 +66,7 @@ export default function PlatformDashboardPage() {
       const data = await getPlatformHealth()
       setHealth(data)
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Failed to check system health')
     } finally {
       setLoadingHealth(false)

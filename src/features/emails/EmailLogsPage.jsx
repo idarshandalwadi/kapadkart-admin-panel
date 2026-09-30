@@ -238,6 +238,7 @@ export default function EmailLogsPage() {
       setProviderInfo(providerData)
       if (shopsData?.length) setShops(shopsData)
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Failed to load email logs')
     } finally {
       setLoading(false)
@@ -265,6 +266,7 @@ export default function EmailLogsPage() {
         toast.error(`SMTP connection failed: ${res.data?.error || 'Unknown error'}`)
       }
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Connection test failed')
     } finally {
       setTestingConnection(false)

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { clearAdminToken, getAdminToken, setAdminToken } from '@/shared/api/adminToken'
-import { apiFetch } from '@/shared/api/http'
+import { getAdminToken, setAdminToken } from '@/shared/api/adminToken'
+import { apiFetch, retireAdminSession } from '@/shared/api/http'
 
 const AuthContext = createContext(null)
 
@@ -22,15 +22,20 @@ export function AuthProvider({ children }) {
   }, [])
 
   const logout = useCallback(async () => {
+    const token = getAdminToken()
+    // Drop the local session before the logout request. The login route sends a
+    // still-authenticated admin back to the dashboard, and those calls then fail
+    // once the server revokes the token.
+    retireAdminSession()
+    setAuthenticated(false)
+    if (!token) return
     try {
-      if (getAdminToken()) {
-        await apiFetch('/api/platform-auth/logout', { method: 'POST' })
-      }
+      await apiFetch('/api/platform-auth/logout', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
     } catch {
-      // ignore logout API errors — clear local session either way
-    } finally {
-      clearAdminToken()
-      setAuthenticated(false)
+      // Local session is already cleared.
     }
   }, [])
 

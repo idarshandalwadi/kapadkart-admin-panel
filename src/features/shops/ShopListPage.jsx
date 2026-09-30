@@ -49,6 +49,7 @@ export default function ShopListPage() {
       const data = await listShops({ includeDeleted: showDeleted })
       setShops(Array.isArray(data) ? data : [])
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Failed to load shops')
     } finally {
       setLoading(false)
@@ -68,6 +69,7 @@ export default function ShopListPage() {
       setPendingAction(null)
       await load(includeDeleted)
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Action failed')
     } finally {
       setBusySlug(null)

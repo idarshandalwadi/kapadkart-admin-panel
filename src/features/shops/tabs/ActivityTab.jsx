@@ -159,6 +159,7 @@ export default function ActivityTab({ slug }) {
       })
       setData(res || { items: [], total: 0, totalPages: 1, page: 1, limit: 20 })
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Failed to load activity logs')
     } finally {
       setLoading(false)

@@ -36,6 +36,7 @@ export default function DangerZoneTab({ shop, onShopUpdated }) {
         await onShopUpdated()
       }
     } catch (err) {
+      if (err?.silent) return
       toast.error(err.message || 'Action failed')
     } finally {
       setBusy(false)
