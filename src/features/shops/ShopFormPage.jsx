@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { createShop, getShop, updateShop, uploadShopLogo } from '@/features/shops/api'
 import LogoImageField from '@/features/shops/LogoImageField'
+import ColorPickerInput from '@/shared/components/ColorPickerInput'
 import FormSelect from '@/shared/components/FormSelect'
 import { isInlineAssetUrl } from '@/shared/utils/assetUrl'
 
@@ -48,6 +49,7 @@ export default function ShopFormPage() {
   const navigate = useNavigate()
 
   const [form, setForm] = useState(EMPTY_FORM)
+  const [showPassword, setShowPassword] = useState(false)
   const [pendingLogoFile, setPendingLogoFile] = useState(null)
   const [manualCompany, setManualCompany] = useState(false)
   const [manualPageTitle, setManualPageTitle] = useState(false)
@@ -342,19 +344,19 @@ export default function ShopFormPage() {
           </label>
           <label className={labelClass}>
             Primary color
-            <input
-              className={fieldClass}
+            <ColorPickerInput
+              name="primary_color"
               value={form.primary_color}
-              onChange={onChange('primary_color')}
+              onChange={(val) => setForm((prev) => ({ ...prev, primary_color: val }))}
               placeholder="#d97706"
             />
           </label>
           <label className={labelClass}>
             Secondary color
-            <input
-              className={fieldClass}
+            <ColorPickerInput
+              name="secondary_color"
               value={form.secondary_color}
-              onChange={onChange('secondary_color')}
+              onChange={(val) => setForm((prev) => ({ ...prev, secondary_color: val }))}
               placeholder="#b45309"
             />
           </label>
@@ -402,17 +404,31 @@ export default function ShopFormPage() {
               onChange={onChange('owner_full_name')}
             />
           </label>
-          <label className={`${labelClass} min-[640px]:col-span-2`}>
+          <label className={labelClass}>
             {isEdit ? 'New password (optional)' : 'Owner password *'}
-            <input
-              type="password"
-              className={fieldClass}
-              value={form.owner_password}
-              onChange={onChange('owner_password')}
-              required={!isEdit}
-              minLength={6}
-              autoComplete="new-password"
-            />
+            <div className="relative flex items-center w-full">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className={`${fieldClass} w-full pr-11`}
+                value={form.owner_password}
+                onChange={onChange('owner_password')}
+                required={!isEdit}
+                minLength={6}
+                autoComplete="new-password"
+                placeholder={isEdit ? 'Leave blank to keep unchanged' : 'Minimum 6 characters'}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer p-1.5 text-muted transition-colors hover:text-ink focus:text-accent focus:outline-none"
+              >
+                <i
+                  className={showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'}
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
           </label>
         </section>
 
